@@ -12,6 +12,7 @@ from app.api.tasks import router as tasks_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.db.session import init_db
+from app.services.cron_jobs import ensure_mission_control_cron_job
 
 configure_logging()
 
@@ -29,8 +30,9 @@ if origins:
 
 
 @app.on_event("startup")
-def on_startup() -> None:
+async def on_startup() -> None:
     init_db()
+    await ensure_mission_control_cron_job()
 
 
 @app.get("/health")
