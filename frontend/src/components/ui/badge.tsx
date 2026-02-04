@@ -4,13 +4,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold",
+  "inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em]",
   {
     variants: {
       variant: {
-        default: "bg-gray-100 text-gray-800",
-        outline: "border border-gray-300 text-gray-800",
-        ember: "bg-gray-900 text-white",
+        default: "bg-[color:var(--surface-muted)] text-strong",
+        outline:
+          "border border-[color:var(--border-strong)] text-[color:var(--text-muted)]",
+        accent: "bg-[color:var(--accent-soft)] text-[color:var(--accent-strong)]",
+        success:
+          "bg-[color:rgba(15,118,110,0.14)] text-[color:var(--success)]",
+        warning:
+          "bg-[color:rgba(180,83,9,0.15)] text-[color:var(--warning)]",
+        danger:
+          "bg-[color:rgba(180,35,24,0.15)] text-[color:var(--danger)]",
       },
     },
     defaultVariants: {

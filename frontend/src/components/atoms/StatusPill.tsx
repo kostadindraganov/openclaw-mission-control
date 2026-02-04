@@ -1,21 +1,24 @@
 import { Badge } from "@/components/ui/badge";
 
-const STATUS_STYLES: Record<string, "default" | "outline" | "ember"> = {
+const STATUS_STYLES: Record<
+  string,
+  "default" | "outline" | "accent" | "success" | "warning" | "danger"
+> = {
   inbox: "outline",
-  assigned: "default",
-  in_progress: "ember",
-  testing: "outline",
-  review: "default",
-  done: "default",
-  online: "default",
-  busy: "ember",
+  assigned: "accent",
+  in_progress: "warning",
+  testing: "accent",
+  review: "accent",
+  done: "success",
+  online: "success",
+  busy: "warning",
   offline: "outline",
 };
 
 export function StatusPill({ status }: { status: string }) {
   return (
     <Badge variant={STATUS_STYLES[status] ?? "default"}>
-      {status.replace("_", " ")}
+      {status.replaceAll("_", " ")}
     </Badge>
   );
 }

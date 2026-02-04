@@ -66,8 +66,8 @@ export default function NewBoardPage() {
   return (
     <DashboardShell>
       <SignedOut>
-        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-xl border-2 border-gray-200 bg-white p-10 text-center shadow-lush lg:col-span-2">
-          <p className="text-sm text-gray-600">Sign in to create a board.</p>
+        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-2xl surface-panel p-10 text-center lg:col-span-2">
+          <p className="text-sm text-muted">Sign in to create a board.</p>
           <SignInButton
             mode="modal"
             afterSignInUrl="/boards/new"
@@ -75,47 +75,44 @@ export default function NewBoardPage() {
             forceRedirectUrl="/boards/new"
             signUpForceRedirectUrl="/boards/new"
           >
-            <Button className="border-2 border-gray-900 bg-gray-900 text-white">
-              Sign in
-            </Button>
+            <Button>Sign in</Button>
           </SignInButton>
         </div>
       </SignedOut>
       <SignedIn>
         <DashboardSidebar />
-        <div className="flex h-full flex-col justify-center rounded-xl border-2 border-gray-200 bg-white p-8 shadow-lush">
+        <div className="flex h-full flex-col justify-center rounded-2xl surface-panel p-8">
           <div className="mb-6 space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-quiet">
               New board
             </p>
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="text-2xl font-semibold text-strong">
               Spin up a board.
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted">
               Boards are where tasks live and move through your workflow.
             </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-800">
+              <label className="text-sm font-medium text-strong">
                 Board name
               </label>
               <Input
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 placeholder="e.g. Product ops"
-                className="h-11 rounded-lg border-2 border-gray-200 bg-white"
                 disabled={isLoading}
               />
             </div>
             {error ? (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+              <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-3 text-xs text-muted">
                 {error}
               </div>
             ) : null}
             <Button
               type="submit"
-              className="w-full border-2 border-gray-900 bg-gray-900 text-white"
+              className="w-full"
               disabled={isLoading}
             >
               {isLoading ? "Creating…" : "Create board"}
@@ -123,7 +120,7 @@ export default function NewBoardPage() {
           </form>
           <Button
             variant="outline"
-            className="mt-4 border-2 border-gray-200 text-gray-700"
+            className="mt-4"
             onClick={() => router.push("/boards")}
           >
             Back to boards

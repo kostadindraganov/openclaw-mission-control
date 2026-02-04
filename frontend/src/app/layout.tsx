@@ -4,23 +4,25 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { ClerkProvider } from "@clerk/nextjs";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Sans, Sora } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "OpenClaw Mission Control",
   description: "A calm command center for every task.",
 };
 
-const bodyFont = Inter({
+const bodyFont = IBM_Plex_Sans({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-body",
+  weight: ["400", "500", "600", "700"],
 });
 
-const headingFont = Space_Grotesk({
+const headingFont = Sora({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-heading",
+  weight: ["500", "600", "700"],
 });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -28,7 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${bodyFont.variable} ${headingFont.variable} min-h-screen bg-white text-gray-900 antialiased`}
+          className={`${bodyFont.variable} ${headingFont.variable} min-h-screen bg-app text-strong antialiased`}
         >
           {children}
         </body>

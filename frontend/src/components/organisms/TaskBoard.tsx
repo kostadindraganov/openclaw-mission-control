@@ -55,18 +55,16 @@ export function TaskBoard({
   }, [tasks]);
 
   return (
-    <div className="grid grid-flow-col auto-cols-[minmax(260px,320px)] gap-6 overflow-x-auto pb-2">
+    <div className="grid grid-flow-col auto-cols-[minmax(260px,320px)] gap-6 overflow-x-auto pb-4">
       {columns.map((column) => {
         const columnTasks = grouped[column.status] ?? [];
         return (
           <div key={column.title} className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-900">
+              <h3 className="text-sm font-semibold text-strong">
                 {column.title}
               </h3>
-              <span className="text-xs text-gray-500">
-                {columnTasks.length}
-              </span>
+              <span className="text-xs text-quiet">{columnTasks.length}</span>
             </div>
             <div className="space-y-3">
               {column.status === "inbox" ? (
@@ -75,7 +73,7 @@ export function TaskBoard({
                   onClick={onCreateTask}
                   disabled={isCreateDisabled}
                   className={cn(
-                    "flex w-full items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 transition hover:border-gray-300 hover:bg-white",
+                    "flex w-full items-center justify-center rounded-2xl border border-dashed border-[color:var(--border)] bg-[color:var(--surface-muted)] px-4 py-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-quiet transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--surface)]",
                     isCreateDisabled && "cursor-not-allowed opacity-60"
                   )}
                 >

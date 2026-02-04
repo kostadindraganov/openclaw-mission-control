@@ -4,6 +4,8 @@ import re
 from pathlib import Path
 from uuid import uuid4
 
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
+
 from app.core.config import settings
 from app.integrations.openclaw_gateway import send_message
 from app.models.agents import Agent
@@ -33,15 +35,25 @@ def _slugify(value: str) -> str:
     return slug or uuid4().hex
 
 
-def _read_templates() -> dict[str, str]:
-    root = _templates_root()
+def _template_env() -> Environment:
+    return Environment(
+        loader=FileSystemLoader(_templates_root()),
+        autoescape=False,
+        undefined=StrictUndefined,
+        keep_trailing_newline=True,
+    )
+
+
+def _read_templates(context: dict[str, str]) -> dict[str, str]:
+    env = _template_env()
     templates: dict[str, str] = {}
     for name in TEMPLATE_FILES:
-        path = root / name
-        if path.exists():
-            templates[name] = path.read_text(encoding="utf-8").strip()
-        else:
+        path = _templates_root() / name
+        if not path.exists():
             templates[name] = ""
+            continue
+        template = env.get_template(name)
+        templates[name] = template.render(**context).strip()
     return templates
 
 
@@ -57,11 +69,28 @@ def _workspace_path(agent_name: str) -> str:
 
 
 def build_provisioning_message(agent: Agent) -> str:
-    templates = _read_templates()
-    agent_id = _slugify(agent.name)
+    agent_id = str(agent.id)
     workspace_path = _workspace_path(agent.name)
     session_key = agent.openclaw_session_id or ""
-    base_url = settings.base_url or ""
+    base_url = settings.base_url or "REPLACE_WITH_BASE_URL"
+    auth_token = "REPLACE_WITH_AUTH_TOKEN"
+
+    context = {
+        "agent_name": agent.name,
+        "agent_id": agent_id,
+        "session_key": session_key,
+        "workspace_path": workspace_path,
+        "base_url": base_url,
+        "auth_token": auth_token,
+        "main_session_key": settings.openclaw_main_session_key or "agent:main:main",
+        "workspace_root": settings.openclaw_workspace_root or "~/.openclaw/workspaces",
+        "user_name": "Unset",
+        "user_preferred_name": "Unset",
+        "user_timezone": "Unset",
+        "user_notes": "Fill in user context.",
+    }
+
+    templates = _read_templates(context)
 
     file_blocks = "".join(
         _render_file_block(name, templates.get(name, "")) for name in TEMPLATE_FILES
@@ -73,14 +102,14 @@ def build_provisioning_message(agent: Agent) -> str:
         f"Agent id: {agent_id}\n"
         f"Session key: {session_key}\n"
         f"Workspace path: {workspace_path}\n\n"
-        f"Base URL: {base_url or 'UNSET'}\n\n"
+        f"Base URL: {base_url}\n"
+        f"Auth token: {auth_token}\n\n"
         "Steps:\n"
         "1) Create the workspace directory.\n"
         "2) Write the files below with the exact contents.\n"
-        f"3) Set BASE_URL to {base_url or '{{BASE_URL}}'} for the agent runtime.\n"
-        "4) Replace placeholders like {{AGENT_NAME}}, {{AGENT_ID}}, {{BASE_URL}}, {{AUTH_TOKEN}}.\n"
-        "5) Leave BOOTSTRAP.md in place; the agent should run it on first start and delete it.\n"
-        "6) Register agent id in OpenClaw so it uses this workspace path.\n\n"
+        "3) Update TOOLS.md if BASE_URL/AUTH_TOKEN must change.\n"
+        "4) Leave BOOTSTRAP.md in place; the agent should run it on first start and delete it.\n"
+        "5) Register agent id in OpenClaw so it uses this workspace path.\n\n"
         "Files:" + file_blocks
     )
 

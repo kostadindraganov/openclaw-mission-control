@@ -73,8 +73,8 @@ export default function BoardsPage() {
         header: "Board",
         cell: ({ row }) => (
           <div>
-            <p className="font-medium text-gray-900">{row.original.name}</p>
-            <p className="text-xs text-gray-500">{row.original.slug}</p>
+            <p className="font-medium text-strong">{row.original.name}</p>
+            <p className="text-xs text-quiet">{row.original.slug}</p>
           </div>
         ),
       },
@@ -88,7 +88,7 @@ export default function BoardsPage() {
           >
             <Link
               href={`/boards/${row.original.id}`}
-              className="inline-flex h-8 items-center justify-center rounded-lg border-2 border-gray-200 px-3 text-xs font-medium text-gray-700"
+              className="inline-flex h-8 items-center justify-center rounded-lg border border-[color:var(--border)] px-3 text-xs font-medium text-muted transition hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
             >
               Open
             </Link>
@@ -108,8 +108,8 @@ export default function BoardsPage() {
   return (
     <DashboardShell>
       <SignedOut>
-        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-xl border-2 border-gray-200 bg-white p-10 text-center shadow-lush lg:col-span-2">
-          <p className="text-sm text-gray-600">Sign in to view boards.</p>
+        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-2xl surface-panel p-10 text-center lg:col-span-2">
+          <p className="text-sm text-muted">Sign in to view boards.</p>
           <SignInButton
             mode="modal"
             afterSignInUrl="/boards"
@@ -117,51 +117,46 @@ export default function BoardsPage() {
             forceRedirectUrl="/boards"
             signUpForceRedirectUrl="/boards"
           >
-            <Button className="border-2 border-gray-900 bg-gray-900 text-white">
-              Sign in
-            </Button>
+            <Button>Sign in</Button>
           </SignInButton>
         </div>
       </SignedOut>
       <SignedIn>
         <DashboardSidebar />
-        <div className="flex h-full flex-col gap-4 rounded-xl border-2 border-gray-200 bg-white p-8 shadow-lush">
+        <div className="flex h-full flex-col gap-6 rounded-2xl surface-panel p-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Boards</h2>
-              <p className="text-sm text-gray-500">
+              <h2 className="text-lg font-semibold text-strong">Boards</h2>
+              <p className="text-sm text-muted">
                 {sortedBoards.length} board
                 {sortedBoards.length === 1 ? "" : "s"} total.
               </p>
             </div>
-            <Button
-              className="border-2 border-gray-900 bg-gray-900 text-white"
-              onClick={() => router.push("/boards/new")}
-            >
+            <Button onClick={() => router.push("/boards/new")}>
               New board
             </Button>
           </div>
 
           {error && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+            <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-3 text-xs text-muted">
               {error}
             </div>
           )}
 
           {sortedBoards.length === 0 && !isLoading ? (
-            <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-gray-200 bg-gray-50 p-6 text-center text-sm text-gray-500">
+            <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[color:var(--border)] bg-[color:var(--surface-muted)] p-6 text-center text-sm text-muted">
               No boards yet. Create your first board to get started.
             </div>
           ) : (
-            <div className="overflow-hidden rounded-lg border border-gray-200">
-              <table className="min-w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-50">
+            <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)]">
+              <table className="min-w-full divide-y divide-[color:var(--border)] text-sm">
+                <thead className="bg-[color:var(--surface-muted)]">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id}>
                       {headerGroup.headers.map((header) => (
                         <th
                           key={header.id}
-                          className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500"
+                          className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.22em] text-quiet"
                         >
                           {header.isPlaceholder
                             ? null
@@ -174,11 +169,11 @@ export default function BoardsPage() {
                     </tr>
                   ))}
                 </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
+                <tbody className="divide-y divide-[color:var(--border)] bg-[color:var(--surface)]">
                   {table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      className="cursor-pointer hover:bg-gray-50"
+                      className="cursor-pointer transition hover:bg-[color:var(--surface-muted)]"
                       onClick={() => router.push(`/boards/${row.original.id}`)}
                     >
                       {row.getVisibleCells().map((cell) => (

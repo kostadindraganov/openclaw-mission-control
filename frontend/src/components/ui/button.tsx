@@ -6,15 +6,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-lg text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         primary:
-          "border-2 border-gray-900 bg-gray-900 text-white hover:bg-gray-900/90",
+          "bg-[color:var(--accent)] text-white shadow-sm hover:bg-[color:var(--accent-strong)]",
         secondary:
-          "border-2 border-gray-200 bg-white text-gray-900 hover:border-gray-900 hover:bg-gray-900 hover:text-white",
-        ghost: "bg-transparent text-gray-900 hover:bg-black/5",
+          "border border-[color:var(--border)] bg-[color:var(--surface)] text-strong hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]",
+        outline:
+          "border border-[color:var(--border-strong)] bg-transparent text-strong hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]",
+        ghost: "bg-transparent text-strong hover:bg-[color:var(--surface-strong)]",
       },
       size: {
         sm: "h-9 px-4",

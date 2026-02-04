@@ -168,8 +168,8 @@ export default function BoardDetailPage() {
   return (
     <DashboardShell>
       <SignedOut>
-        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-xl border-2 border-gray-200 bg-white p-10 text-center shadow-lush">
-          <p className="text-sm text-gray-600">Sign in to view boards.</p>
+        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-2xl surface-panel p-10 text-center">
+          <p className="text-sm text-muted">Sign in to view boards.</p>
           <SignInButton
             mode="modal"
             afterSignInUrl="/boards"
@@ -177,30 +177,27 @@ export default function BoardDetailPage() {
             forceRedirectUrl="/boards"
             signUpForceRedirectUrl="/boards"
           >
-            <Button className="border-2 border-gray-900 bg-gray-900 text-white">
-              Sign in
-            </Button>
+            <Button>Sign in</Button>
           </SignInButton>
         </div>
       </SignedOut>
       <SignedIn>
         <DashboardSidebar />
-        <div className="flex h-full flex-col gap-6 rounded-xl border-2 border-gray-200 bg-white p-8 shadow-lush">
+        <div className="flex h-full flex-col gap-6 rounded-2xl surface-panel p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-quiet">
                 {board?.slug ?? "board"}
               </p>
-              <h1 className="text-2xl font-semibold text-gray-900">
+              <h1 className="text-2xl font-semibold text-strong">
                 {board?.name ?? "Board"}
               </h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted">
                 Keep tasks moving through your workflow.
               </p>
             </div>
             <Button
               variant="outline"
-              className="border-2 border-gray-200 text-gray-700"
               onClick={() => router.push("/boards")}
             >
               Back to boards
@@ -208,13 +205,13 @@ export default function BoardDetailPage() {
           </div>
 
           {error && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+            <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-3 text-xs text-muted">
               {error}
             </div>
           )}
 
           {isLoading ? (
-            <div className="flex flex-1 items-center justify-center text-sm text-gray-500">
+            <div className="flex flex-1 items-center justify-center text-sm text-muted">
               Loading {titleLabel}…
             </div>
           ) : (
@@ -245,27 +242,26 @@ export default function BoardDetailPage() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-800">Title</label>
+              <label className="text-sm font-medium text-strong">Title</label>
               <Input
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 placeholder="e.g. Prepare launch notes"
-                className="h-11 rounded-lg border-2 border-gray-200 bg-white"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-800">
+              <label className="text-sm font-medium text-strong">
                 Description
               </label>
               <Textarea
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 placeholder="Optional details"
-                className="min-h-[120px] rounded-lg border-2 border-gray-200 bg-white"
+                className="min-h-[120px]"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-800">
+              <label className="text-sm font-medium text-strong">
                 Priority
               </label>
               <Select value={priority} onValueChange={setPriority}>
@@ -282,7 +278,7 @@ export default function BoardDetailPage() {
               </Select>
             </div>
             {createError ? (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+              <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-3 text-xs text-muted">
                 {createError}
               </div>
             ) : null}
@@ -290,13 +286,11 @@ export default function BoardDetailPage() {
           <DialogFooter>
             <Button
               variant="outline"
-              className="border-2 border-gray-200 text-gray-700"
               onClick={() => setIsDialogOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              className="border-2 border-gray-900 bg-gray-900 text-white"
               onClick={handleCreateTask}
               disabled={isCreating}
             >

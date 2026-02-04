@@ -278,8 +278,8 @@ export default function AgentsPage() {
   return (
     <DashboardShell>
       <SignedOut>
-        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-xl border-2 border-gray-200 bg-white p-10 text-center shadow-lush">
-          <p className="text-sm text-gray-600">
+        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-2xl surface-panel p-10 text-center">
+          <p className="text-sm text-muted">
             Sign in to view operational status.
           </p>
           <SignInButton
@@ -289,64 +289,56 @@ export default function AgentsPage() {
             forceRedirectUrl="/agents"
             signUpForceRedirectUrl="/agents"
           >
-            <Button className="border-2 border-gray-900 bg-gray-900 text-white">
-              Sign in
-            </Button>
+            <Button>Sign in</Button>
           </SignInButton>
         </div>
       </SignedOut>
       <SignedIn>
         <DashboardSidebar />
-        <div className="flex h-full flex-col gap-6 rounded-xl border-2 border-gray-200 bg-white p-8 shadow-lush">
+        <div className="flex h-full flex-col gap-6 rounded-2xl surface-panel p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-quiet">
                 Operations
               </p>
-              <h1 className="text-2xl font-semibold text-gray-900">
-                Agents
-              </h1>
-              <p className="text-sm text-gray-600">
+              <h1 className="text-2xl font-semibold text-strong">Agents</h1>
+              <p className="text-sm text-muted">
                 Live status and heartbeat activity across all agents.
               </p>
             </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                className="border-2 border-gray-200 text-gray-700"
                 onClick={() => loadData()}
                 disabled={isLoading}
               >
                 Refresh
               </Button>
-              <Button
-                className="border-2 border-gray-900 bg-gray-900 text-white"
-                onClick={() => setIsDialogOpen(true)}
-              >
+              <Button onClick={() => setIsDialogOpen(true)}>
                 New agent
               </Button>
             </div>
           </div>
 
           {error ? (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+            <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-3 text-xs text-muted">
               {error}
             </div>
           ) : null}
 
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="overflow-hidden rounded-xl border border-gray-200">
-              <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+            <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)]">
+              <div className="flex items-center justify-between border-b border-[color:var(--border)] bg-[color:var(--surface-muted)] px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-quiet">
                   Agents
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-quiet">
                   {sortedAgents.length} total
                 </p>
               </div>
-              <div className="divide-y divide-gray-200 text-sm">
+              <div className="divide-y divide-[color:var(--border)] text-sm">
                 {sortedAgents.length === 0 && !isLoading ? (
-                  <div className="p-6 text-sm text-gray-500">
+                  <div className="p-6 text-sm text-muted">
                     No agents yet. Add one or wait for a heartbeat.
                   </div>
                 ) : (
@@ -356,10 +348,8 @@ export default function AgentsPage() {
                       className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
                     >
                       <div>
-                        <p className="font-medium text-gray-900">
-                          {agent.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="font-medium text-strong">{agent.name}</p>
+                        <p className="text-xs text-quiet">
                           Last seen {formatRelative(agent.last_seen_at)}
                         </p>
                       </div>
@@ -367,7 +357,7 @@ export default function AgentsPage() {
                         <StatusPill status={agent.status} />
                         <Button
                           variant="outline"
-                          className="border-2 border-gray-200 text-xs text-gray-700"
+                          size="sm"
                           onClick={() => router.push(`/boards`)}
                         >
                           View work
@@ -379,7 +369,7 @@ export default function AgentsPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+            <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-5">
               <Tabs defaultValue="activity">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <TabsList>
@@ -389,28 +379,28 @@ export default function AgentsPage() {
                 </div>
                 <TabsContent value="activity">
                   <div className="mb-4 flex items-center justify-between">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-quiet">
                       Activity feed
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-quiet">
                       {events.length} events
                     </p>
                   </div>
                   <div className="space-y-3">
                     {events.length === 0 && !isLoading ? (
-                      <div className="rounded-lg border border-dashed border-gray-200 bg-white p-4 text-sm text-gray-500">
+                      <div className="rounded-lg border border-dashed border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-sm text-muted">
                         No activity yet.
                       </div>
                     ) : (
                       events.map((event) => (
                         <div
                           key={event.id}
-                          className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"
+                          className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-sm text-muted"
                         >
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-strong">
                             {event.message ?? event.event_type}
                           </p>
-                          <p className="mt-1 text-xs text-gray-500">
+                          <p className="mt-1 text-xs text-quiet">
                             {formatTimestamp(event.created_at)}
                           </p>
                         </div>
@@ -420,45 +410,45 @@ export default function AgentsPage() {
                 </TabsContent>
                 <TabsContent value="gateway">
                   <div className="mb-4 flex items-center justify-between">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-quiet">
                       OpenClaw Gateway
                     </p>
                     <Button
                       variant="outline"
-                      className="border-2 border-gray-200 text-xs text-gray-700"
+                      size="sm"
                       onClick={() => loadGateway()}
                     >
                       Refresh
                     </Button>
                   </div>
                   <div className="space-y-4">
-                    <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700">
+                    <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-sm text-muted">
                       <div className="flex items-center justify-between">
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-strong">
                           {gatewayStatus?.connected ? "Connected" : "Not connected"}
                         </p>
                         <StatusPill
                           status={gatewayStatus?.connected ? "online" : "offline"}
                         />
                       </div>
-                      <p className="mt-1 text-xs text-gray-500">
+                      <p className="mt-1 text-xs text-quiet">
                         {gatewayStatus?.gateway_url ?? "Gateway URL not set"}
                       </p>
                       {gatewayStatus?.error ? (
-                        <p className="mt-2 text-xs text-red-500">
+                        <p className="mt-2 text-xs text-[color:var(--danger)]">
                           {gatewayStatus.error}
                         </p>
                       ) : null}
                     </div>
 
-                    <div className="rounded-lg border border-gray-200 bg-white">
-                      <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                    <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)]">
+                      <div className="flex items-center justify-between border-b border-[color:var(--border)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-quiet">
                         <span>Sessions</span>
                         <span>{gatewaySessions.length}</span>
                       </div>
-                      <div className="max-h-56 divide-y divide-gray-200 overflow-y-auto text-sm">
+                      <div className="max-h-56 divide-y divide-[color:var(--border)] overflow-y-auto text-sm">
                         {gatewaySessions.length === 0 ? (
-                          <div className="p-4 text-sm text-gray-500">
+                          <div className="p-4 text-sm text-muted">
                             No sessions found.
                           </div>
                         ) : (
@@ -473,7 +463,7 @@ export default function AgentsPage() {
                               <button
                                 key={getSessionKey(session, index)}
                                 type="button"
-                                className="flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-gray-50"
+                                className="flex w-full items-center justify-between px-4 py-3 text-left text-sm transition hover:bg-[color:var(--surface-muted)]"
                                 onClick={() => {
                                   setSelectedSession(session);
                                   if (sessionId) {
@@ -482,12 +472,12 @@ export default function AgentsPage() {
                                 }}
                               >
                                 <div>
-                                  <p className="font-medium text-gray-900">{display}</p>
-                                  <p className="text-xs text-gray-500">
+                                  <p className="font-medium text-strong">{display}</p>
+                                  <p className="text-xs text-quiet">
                                     {session.status ?? "active"}
                                   </p>
                                 </div>
-                                <span className="text-xs text-gray-400">Open</span>
+                                <span className="text-xs text-quiet">Open</span>
                               </button>
                             );
                           })
@@ -496,19 +486,19 @@ export default function AgentsPage() {
                     </div>
 
                     {selectedSession ? (
-                      <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700">
+                      <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-sm text-muted">
                         <div className="mb-3 space-y-1">
-                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-quiet">
                             Session details
                           </p>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-strong">
                             {selectedSession.displayName ??
                               selectedSession.label ??
                               selectedSession.key ??
                               "Session"}
                           </p>
                         </div>
-                        <div className="mb-4 max-h-40 space-y-2 overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+                        <div className="mb-4 max-h-40 space-y-2 overflow-y-auto rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-3 text-xs text-muted">
                           {sessionHistory.length === 0 ? (
                             <p>No history loaded.</p>
                           ) : (
@@ -520,17 +510,17 @@ export default function AgentsPage() {
                           )}
                         </div>
                         <div className="space-y-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-quiet">
                             Send message
                           </label>
                           <Input
                             value={message}
                             onChange={(event) => setMessage(event.target.value)}
                             placeholder="Type a message to the session"
-                            className="h-10 rounded-lg border-2 border-gray-200 bg-white"
+                            className="h-10"
                           />
                           <Button
-                            className="w-full border-2 border-gray-900 bg-gray-900 text-white"
+                            className="w-full"
                             onClick={handleSendMessage}
                             disabled={isSending}
                           >
@@ -541,7 +531,7 @@ export default function AgentsPage() {
                     ) : null}
 
                     {gatewayError ? (
-                      <div className="rounded-lg border border-gray-200 bg-white p-3 text-xs text-red-500">
+                      <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-3 text-xs text-[color:var(--danger)]">
                         {gatewayError}
                       </div>
                     ) : null}
@@ -571,20 +561,16 @@ export default function AgentsPage() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-800">
-                Agent name
-              </label>
+              <label className="text-sm font-medium text-strong">Agent name</label>
               <Input
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 placeholder="e.g. Deployment bot"
-                className="h-11 rounded-lg border-2 border-gray-200 bg-white"
+                className="h-11"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-800">
-                Status
-              </label>
+              <label className="text-sm font-medium text-strong">Status</label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -599,7 +585,7 @@ export default function AgentsPage() {
               </Select>
             </div>
             {createError ? (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+              <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-3 text-xs text-muted">
                 {createError}
               </div>
             ) : null}
@@ -607,13 +593,11 @@ export default function AgentsPage() {
           <DialogFooter>
             <Button
               variant="outline"
-              className="border-2 border-gray-200 text-gray-700"
               onClick={() => setIsDialogOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              className="border-2 border-gray-900 bg-gray-900 text-white"
               onClick={handleCreate}
               disabled={isCreating}
             >

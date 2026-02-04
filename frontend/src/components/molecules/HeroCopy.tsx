@@ -5,14 +5,14 @@ export function HeroCopy() {
     <div className="space-y-6">
       <HeroKicker>Mission Control</HeroKicker>
       <div className="space-y-4">
-        <h1 className="font-heading text-4xl font-bold leading-tight text-gray-900 sm:text-5xl lg:text-6xl">
-          Orchestrate work without
+        <h1 className="font-heading text-4xl font-semibold leading-tight text-strong sm:text-5xl lg:text-6xl">
+          Enterprise control for
           <br />
-          the daily status chase.
+          autonomous execution.
         </h1>
-        <p className="max-w-xl text-base text-gray-600 sm:text-lg">
-          OpenClaw keeps every task, agent, and delivery signal in one place so
-          teams can spot momentum shifts fast.
+        <p className="max-w-xl text-base text-muted sm:text-lg">
+          Coordinate boards, agents, and approvals in one command layer. No
+          status meetings. No blind spots. Just durable execution.
         </p>
       </div>
     </div>

@@ -1,7 +1,7 @@
 # USER.md
 
-Name: {{USER_NAME}}
-Preferred name: {{USER_PREFERRED_NAME}}
-Timezone: {{USER_TIMEZONE}}
+Name: {{ user_name }}
+Preferred name: {{ user_preferred_name }}
+Timezone: {{ user_timezone }}
 Notes:
-- {{USER_NOTES}}
+- {{ user_notes }}

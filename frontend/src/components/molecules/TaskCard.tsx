@@ -12,15 +12,15 @@ interface TaskCardProps {
 
 export function TaskCard({ title, status, assignee, due }: TaskCardProps) {
   return (
-    <Card className="border-gray-200 bg-white">
+    <Card className="border border-[color:var(--border)] bg-[color:var(--surface)]">
       <CardContent className="space-y-4">
         <div className="flex items-start justify-between gap-3">
-          <div className="space-y-1">
-            <p className="text-sm font-semibold text-gray-900">{title}</p>
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-strong">{title}</p>
             <StatusPill status={status} />
           </div>
         </div>
-        <div className="flex items-center justify-between text-xs text-gray-600">
+        <div className="flex items-center justify-between text-xs text-muted">
           <div className="flex items-center gap-2">
             <UserCircle className="h-4 w-4" />
             <span>{assignee ?? "Unassigned"}</span>

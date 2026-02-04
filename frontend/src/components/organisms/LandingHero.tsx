@@ -7,16 +7,10 @@ import { Button } from "@/components/ui/button";
 
 export function LandingHero() {
   return (
-    <section className="grid w-full items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-      <div
-        className="space-y-8 animate-fade-in-up"
-        style={{ animationDelay: "0.05s" }}
-      >
+    <section className="grid w-full items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="space-y-8 animate-fade-in-up">
         <HeroCopy />
-        <div
-          className="flex flex-col gap-3 sm:flex-row sm:items-center animate-fade-in-up"
-          style={{ animationDelay: "0.12s" }}
-        >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <SignedOut>
             <SignInButton
               mode="modal"
@@ -25,60 +19,85 @@ export function LandingHero() {
               forceRedirectUrl="/boards"
               signUpForceRedirectUrl="/boards"
             >
-              <Button
-                size="lg"
-                className="w-full sm:w-auto border-2 border-gray-900 bg-gray-900 text-white hover:bg-gray-900/90"
-              >
+              <Button size="lg" className="w-full sm:w-auto">
                 Sign in to open mission control
               </Button>
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted">
               You&apos;re signed in. Open your boards when you&apos;re ready.
             </div>
           </SignedIn>
         </div>
-        <p
-          className="text-xs uppercase tracking-[0.3em] text-gray-500 animate-fade-in-up"
-          style={{ animationDelay: "0.18s" }}
-        >
-          One login · clear ownership · faster decisions
-        </p>
+        <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-quiet">
+          <span className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-1">
+            Enterprise ready
+          </span>
+          <span className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-1">
+            Agent-first ops
+          </span>
+          <span className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-1">
+            24/7 visibility
+          </span>
+        </div>
       </div>
 
-      <div
-        className="relative animate-fade-in-up"
-        style={{ animationDelay: "0.3s" }}
-      >
-        <div className="glass-panel rounded-2xl bg-white p-6">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">
-              <span>Status</span>
-              <span className="rounded-full border border-gray-200 px-2 py-1 text-[10px]">
-                Live
-              </span>
-            </div>
-            <div className="space-y-2">
-              <p className="text-lg font-semibold text-gray-900">
-                Tasks claimed automatically
+      <div className="relative animate-fade-in-up">
+        <div className="surface-panel rounded-3xl p-6">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-quiet">
+            <span>Command surface</span>
+            <span className="rounded-full border border-[color:var(--border)] px-2 py-1 text-[10px]">
+              Live
+            </span>
+          </div>
+          <div className="mt-6 space-y-4">
+            <div>
+              <p className="text-lg font-semibold text-strong">
+                Tasks claimed, tracked, delivered.
               </p>
-              <p className="text-sm text-gray-600">
-                Agents pick the next task in queue, report progress, and ship
-                deliverables back to you.
+              <p className="text-sm text-muted">
+                See every queue, agent, and handoff without chasing updates.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {["Assignments", "In review", "Delivered", "Signals"].map(
-                (label) => (
-                  <div
-                    key={label}
-                    className="rounded-xl border-2 border-gray-200 bg-white p-4 text-sm font-semibold text-gray-900 soft-shadow-sm"
-                  >
-                    {label}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: "Active boards", value: "12" },
+                { label: "Agents live", value: "08" },
+                { label: "Tasks in flow", value: "46" },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-muted)] p-4 text-center"
+                >
+                  <div className="text-xl font-semibold text-strong">
+                    {item.value}
                   </div>
-                )
-              )}
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-quiet">
+                    {item.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
+              <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] text-quiet">
+                <span>Signals</span>
+                <span>Updated 2m ago</span>
+              </div>
+              <div className="mt-3 space-y-2 text-sm text-muted">
+                <div className="flex items-center justify-between">
+                  <span>Agent Delta moved task to review</span>
+                  <span className="text-quiet">Just now</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Board Growth Ops hit WIP limit</span>
+                  <span className="text-quiet">5m</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Release tasks stabilized</span>
+                  <span className="text-quiet">12m</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
