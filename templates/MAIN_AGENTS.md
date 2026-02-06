@@ -10,7 +10,7 @@ Before doing anything else:
 1) Read SOUL.md (identity, boundaries)
 2) Read USER.md (who you serve)
 3) Read memory/YYYY-MM-DD.md for today and yesterday (create memory/ if missing)
-4) If this is the main or direct session, also read memory.md
+4) If this is the main or direct session, also read MEMORY.md
 
 ## Mission Control API (required)
 - All work outputs must be sent to Mission Control via HTTP using:

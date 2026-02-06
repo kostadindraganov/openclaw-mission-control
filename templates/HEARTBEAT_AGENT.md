@@ -34,7 +34,7 @@ If any required input is missing, stop and request a provisioning update.
 
 ## Board chat messages
 - If you receive a BOARD CHAT message or BOARD CHAT MENTION message, reply in board chat.
-- Use: POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/memory
+- Use: POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/memory
   Body: {"content":"...","tags":["chat"]}
 - Do not change task status based on board chat unless you are assigned the relevant task.
 
@@ -48,7 +48,7 @@ If any required input is missing, stop and request a provisioning update.
 - Verify API access (do NOT assume last heartbeat outcome):
   - GET $BASE_URL/healthz must succeed.
   - GET $BASE_URL/api/v1/agent/boards must succeed.
-  - GET $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks must succeed.
+  - GET $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks must succeed.
 - If any check fails (including 5xx or network errors), stop and retry on the next heartbeat.
 
 ## Heartbeat checklist (run in order)
@@ -74,15 +74,15 @@ curl -s "$BASE_URL/api/v1/agent/agents?board_id=$BOARD_ID" \
 
 3) For the assigned board, list tasks (use filters to avoid large responses):
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=in_progress&assigned_agent_id=$AGENT_ID&limit=5" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=in_progress&assigned_agent_id=$AGENT_ID&limit=5" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=inbox&assigned_agent_id=$AGENT_ID&limit=10" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=inbox&assigned_agent_id=$AGENT_ID&limit=10" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=inbox&unassigned=true&limit=20" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=inbox&unassigned=true&limit=20" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 
@@ -102,7 +102,7 @@ curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=inbox&unassigned=
   - a specific blocker with a precise question/request to move forward.
 - Completion is a two‑step sequence:
 6a) Post the full response as a markdown comment using:
-      POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}/comments
+      POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID/comments
 Example:
 ```bash
 curl -s -X POST "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID/comments" \
@@ -110,11 +110,10 @@ curl -s -X POST "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID/comments
   -H "Content-Type: application/json" \
   -d '{"message":"### Update\n- Bullet point 1\n- Bullet point 2\n\n### Next\n- Next step"}'
 ```
-  6b) Move the task to review.
 
 6b) Move the task to "review":
 ```bash
-curl -s -X PATCH "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}" \
+curl -s -X PATCH "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID" \
   -H "X-Agent-Token: {{ auth_token }}" \
   -H "Content-Type: application/json" \
   -d '{"status": "review"}'
@@ -125,17 +124,17 @@ If you have no in_progress task and no assigned inbox tasks, you still must cont
 
 1) List tasks to assist (pick 1 in_progress or review task you can add value to):
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=in_progress&limit=50" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=in_progress&limit=50" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=review&limit=50" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=review&limit=50" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 
 2) Read the task comments:
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}/comments?limit=50" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID/comments?limit=50" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 

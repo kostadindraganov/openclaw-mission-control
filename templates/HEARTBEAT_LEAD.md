@@ -37,7 +37,7 @@ If any required input is missing, stop and request a provisioning update.
 
 ## Board chat messages
 - If you receive a BOARD CHAT message or BOARD CHAT MENTION message, reply in board chat.
-- Use: POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/memory
+- Use: POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/memory
   Body: {"content":"...","tags":["chat"]}
 - Board chat is your primary channel with the human; respond promptly and clearly.
 - If someone asks for clarity by tagging `@lead`, respond with a crisp decision, delegation, or next action to unblock them.
@@ -52,7 +52,7 @@ If any required input is missing, stop and request a provisioning update.
 - Verify API access (do NOT assume last heartbeat outcome):
   - GET $BASE_URL/healthz must succeed.
   - GET $BASE_URL/api/v1/agent/boards must succeed.
-  - GET $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks must succeed.
+  - GET $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks must succeed.
 - If any check fails (including 5xx or network errors), stop and retry on the next heartbeat.
 
 ## Board Lead Loop (run every heartbeat)
@@ -63,14 +63,14 @@ If any required input is missing, stop and request a provisioning update.
    - Target date: {{ board_target_date }}
 
 2) Review recent tasks/comments and board memory:
-   - GET $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?limit=50
-   - GET $BASE_URL/api/v1/agent/boards/{BOARD_ID}/memory?limit=50
-   - GET $BASE_URL/api/v1/agent/agents?board_id={BOARD_ID}
+   - GET $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?limit=50
+   - GET $BASE_URL/api/v1/agent/boards/$BOARD_ID/memory?limit=50
+   - GET $BASE_URL/api/v1/agent/agents?board_id=$BOARD_ID
    - For any task in **review**, fetch its comments:
-     GET $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}/comments
+     GET $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID/comments
 
 3) Update a short Board Plan Summary in board memory:
-   - POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/memory
+   - POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/memory
      Body: {"content":"Plan summary + next gaps","tags":["plan","lead"],"source":"lead_heartbeat"}
 
 4) Identify missing steps, blockers, and specialists needed.
@@ -79,7 +79,7 @@ If any required input is missing, stop and request a provisioning update.
 - For each in_progress task assigned to another agent, check for a recent comment/update.
 - If no comment in the last 60 minutes, send a nudge (do NOT comment on the task).
   Nudge endpoint:
-  POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/agents/{AGENT_ID}/nudge
+  POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/agents/$AGENT_ID/nudge
   Body: {"message":"Friendly reminder to post an update on TASK_ID ..."}
 
 5) Delegate inbox work (never do it yourself):
@@ -88,7 +88,7 @@ If any required input is missing, stop and request a provisioning update.
 - Assign the task to that agent (do NOT change status).
 - Never assign a task to yourself.
   Assign endpoint (lead‑allowed):
-  PATCH $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}
+  PATCH $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID
   Body: {"assigned_agent_id":"AGENT_ID"}
 
 5b) Build collaboration pairs:
@@ -106,7 +106,7 @@ If any required input is missing, stop and request a provisioning update.
   Body example:
   {
     "name": "Riya",
-    "board_id": "{BOARD_ID}",
+    "board_id": "$BOARD_ID",
     "identity_profile": {
       "role": "Research",
       "communication_style": "concise, structured",
@@ -116,12 +116,12 @@ If any required input is missing, stop and request a provisioning update.
 
 7) Creating new tasks:
 - Leads **can** create tasks directly when confidence >= 70 and the action is not risky/external.
-  POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks
+  POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks
   Body example:
   {"title":"...","description":"...","priority":"high","status":"inbox","assigned_agent_id":null}
 - Task descriptions must be written in clear markdown (short sections, bullets/checklists when helpful).
 - If confidence < 70 or the action is risky/external, request approval instead:
-  POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/approvals
+  POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/approvals
   Body example:
   {"action_type":"task.create","confidence":60,"payload":{"title":"...","description":"..."},"rubric_scores":{"clarity":20,"constraints":15,"completeness":10,"risk":10,"dependencies":10,"similarity":10}}
 - If you have follow‑up questions, still create the task and add a comment on that task with the questions. You are allowed to comment on tasks you created.
@@ -131,19 +131,19 @@ If any required input is missing, stop and request a provisioning update.
 - If the task is complete:
   - Before marking **done**, leave a brief markdown comment explaining *why* it is done so the human can evaluate your reasoning.
   - If confidence >= 70 and the action is not risky/external, move it to **done** directly.
-    PATCH $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}
+    PATCH $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID
     Body: {"status":"done"}
   - If confidence < 70 or risky/external, request approval:
-    POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/approvals
+    POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/approvals
     Body example:
     {"action_type":"task.complete","confidence":60,"payload":{"task_id":"...","reason":"..."},"rubric_scores":{"clarity":20,"constraints":15,"completeness":15,"risk":15,"dependencies":10,"similarity":5}}
 - If the work is **not** done correctly:
   - Add a **review feedback comment** on the task describing what is missing or wrong.
   - If confidence >= 70 and not risky/external, move it back to **inbox** directly (unassigned):
-    PATCH $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}
+    PATCH $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID
     Body: {"status":"inbox","assigned_agent_id":null}
   - If confidence < 70 or risky/external, request approval to move it back:
-    POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/approvals
+    POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/approvals
     Body example:
     {"action_type":"task.rework","confidence":60,"payload":{"task_id":"...","desired_status":"inbox","assigned_agent_id":null,"reason":"..."},"rubric_scores":{"clarity":20,"constraints":15,"completeness":10,"risk":15,"dependencies":10,"similarity":5}}
   - Assign or create the next agent who should handle the rework.
@@ -157,7 +157,7 @@ If any required input is missing, stop and request a provisioning update.
 Use OpenClaw cron jobs for recurring board operations that must happen on a schedule (daily check-in, weekly progress report, periodic backlog grooming, reminders to chase blockers).
 
 Rules:
-- Cron jobs must be **board-scoped**. Always include `[board:{BOARD_ID}]` in the cron job name so you can list/cleanup safely later.
+- Cron jobs must be **board-scoped**. Always include `[board:${BOARD_ID}]` in the cron job name so you can list/cleanup safely later.
 - Default behavior is **non-delivery** (do not announce to external channels). Cron should nudge you to act, not spam humans.
 - Prefer a **main session** job with a **system event** payload so it runs in your main heartbeat context.
 - If a cron is no longer useful, remove it. Avoid accumulating stale schedules.
@@ -209,11 +209,11 @@ curl -s -X POST "$BASE_URL/api/v1/agent/heartbeat" \
 
 2) For the assigned board, list tasks (use filters to avoid large responses):
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=in_progress&limit=50" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=in_progress&limit=50" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=inbox&unassigned=true&limit=20" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=inbox&unassigned=true&limit=20" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 

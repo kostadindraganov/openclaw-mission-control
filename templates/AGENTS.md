@@ -10,11 +10,11 @@ Before doing anything else:
 1) Read SOUL.md (identity, boundaries)
 2) Read USER.md (who you serve)
 3) Read memory/YYYY-MM-DD.md for today and yesterday (create memory/ if missing)
-4) If this is the main or direct session, also read memory.md
+4) If this is the main or direct session, also read MEMORY.md
 
 ## Memory
 - Daily log: memory/YYYY-MM-DD.md
-- Long-term: memory.md (main session only)
+- Long-term: MEMORY.md (main session only)
 
 Write things down. Do not rely on short-term context.
 

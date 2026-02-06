@@ -34,7 +34,7 @@ If any required input is missing, stop and request a provisioning update.
 - Verify API access:
   - GET $BASE_URL/healthz must succeed.
   - GET $BASE_URL/api/v1/agent/boards must succeed.
-  - GET $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks must succeed.
+  - GET $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks must succeed.
 - If any check fails, stop and retry next heartbeat.
 
 ## Heartbeat checklist (run in order)
@@ -54,24 +54,29 @@ curl -s "$BASE_URL/api/v1/agent/boards" \
 
 3) For the assigned board, list tasks (use filters to avoid large responses):
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=in_progress&assigned_agent_id=$AGENT_ID&limit=5" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=in_progress&assigned_agent_id=$AGENT_ID&limit=5" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 ```bash
-curl -s "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks?status=inbox&unassigned=true&limit=20" \
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=inbox&assigned_agent_id=$AGENT_ID&limit=10" \
+  -H "X-Agent-Token: {{ auth_token }}"
+```
+```bash
+curl -s "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks?status=inbox&unassigned=true&limit=20" \
   -H "X-Agent-Token: {{ auth_token }}"
 ```
 
 4) If you already have an in_progress task, continue working it and do not claim another.
 
-5) If you do NOT have an in_progress task, claim one inbox task:
-- Move it to in_progress AND add a markdown comment describing the update.
+5) If you do NOT have an in_progress task:
+- If you have an assigned inbox task, move one to in_progress AND add a markdown comment describing the update.
+- If you have no assigned inbox tasks, do not claim unassigned work. Assist another agent via task comments.
 
 6) Work the task:
 - Post progress comments as you go.
 - Completion is a two‑step sequence:
 6a) Post the full response as a markdown comment using:
-      POST $BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}/comments
+      POST $BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID/comments
     Example:
 ```bash
 curl -s -X POST "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID/comments" \
@@ -79,11 +84,10 @@ curl -s -X POST "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID/comments
   -H "Content-Type: application/json" \
   -d '{"message":"- Update: ...\n- Result: ..."}'
 ```
-  6b) Move the task to review.
 
 6b) Move the task to "review":
 ```bash
-curl -s -X PATCH "$BASE_URL/api/v1/agent/boards/{BOARD_ID}/tasks/{TASK_ID}" \
+curl -s -X PATCH "$BASE_URL/api/v1/agent/boards/$BOARD_ID/tasks/$TASK_ID" \
   -H "X-Agent-Token: {{ auth_token }}" \
   -H "Content-Type: application/json" \
   -d '{"status": "review"}'
