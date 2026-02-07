@@ -4,7 +4,7 @@ This package is the **Next.js** web UI for OpenClaw Mission Control.
 
 - Talks to the Mission Control **backend** over HTTP (typically `http://localhost:8000`).
 - Uses **React Query** for data fetching.
-- Can optionally enable **Clerk** authentication (disabled by default unless you provide a *real* Clerk publishable key).
+- Can optionally enable **Clerk** authentication (disabled by default unless you provide a _real_ Clerk publishable key).
 
 ## Prerequisites
 
@@ -73,7 +73,7 @@ Implementation detail: we gate on a conservative regex (`pk_test_...` / `pk_live
   - `NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL`
 
 **Important:** `frontend/.env.example` contains placeholder values like `YOUR_PUBLISHABLE_KEY`.
-Those placeholders are *not* valid keys and are intentionally treated as “Clerk disabled”.
+Those placeholders are _not_ valid keys and are intentionally treated as “Clerk disabled”.
 
 ## How the frontend talks to the backend
 
