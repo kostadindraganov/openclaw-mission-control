@@ -16,7 +16,7 @@ When running Compose, you get:
   - Health check: `GET /healthz`
 - **Frontend UI** (Next.js) on `http://localhost:${FRONTEND_PORT:-3000}`
 
-Auth (Clerk) is **optional**. If you don’t configure Clerk, the UI should behave as “auth disabled”.
+Auth (Clerk) is **required** right now. You must configure Clerk keys for the frontend, and configure `CLERK_JWKS_URL` for the backend so protected API routes can verify JWTs.
 
 ## Requirements
 
@@ -116,15 +116,41 @@ If present, Compose will load it.
 
 ## Clerk (auth) notes
 
-Mission Control can be configured with Clerk by setting env vars.
+Clerk is currently required.
 
-Common env vars (names may vary by deployment tooling):
+### Frontend (Clerk keys)
 
-- `MISSION_CONTROL_CLERK_SECRET_KEY`
-- `MISSION_CONTROL_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-- `MISSION_CONTROL_CLERK_JWKS_URL`
+Create `frontend/.env` (this file is **not** committed; `compose.yml` loads it if present):
 
-**Security:** treat the secret key like a password. Do not commit it.
+```env
+# Frontend → Backend
+NEXT_PUBLIC_API_URL=http://localhost:8000
+
+# Frontend → Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+CLERK_SECRET_KEY=YOUR_SECRET_KEY
+
+# Optional (but recommended) redirects
+NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/boards
+NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/boards
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/boards
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/boards
+```
+
+### Backend (JWT verification)
+
+The backend verifies Clerk JWTs using **`CLERK_JWKS_URL`**.
+
+- Compose loads `backend/.env.example` by default, where `CLERK_JWKS_URL` is empty.
+- For a real deployment, provide a real value either by:
+  1) creating `backend/.env` and updating `compose.yml` to load it (preferred), **or**
+  2) adding `CLERK_JWKS_URL: ${CLERK_JWKS_URL}` under `backend.environment` and setting it in root `.env`.
+
+Related backend env vars (optional tuning):
+- `CLERK_VERIFY_IAT` (default: true)
+- `CLERK_LEEWAY` (default: 10.0)
+
+**Security:** treat `CLERK_SECRET_KEY` like a password. Do not commit it.
 
 ## Troubleshooting
 
