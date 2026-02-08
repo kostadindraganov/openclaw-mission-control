@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
-import { SignedIn, SignedOut, useAuth } from "@/auth/clerk";
+import { useAuth } from "@/auth/clerk";
 import { X } from "lucide-react";
 
 import { ApiError } from "@/api/mutator";
@@ -29,10 +29,7 @@ import type {
   BoardUpdate,
 } from "@/api/generated/model";
 import { BoardOnboardingChat } from "@/components/BoardOnboardingChat";
-import { AdminOnlyNotice } from "@/components/auth/AdminOnlyNotice";
-import { SignedOutPanel } from "@/components/auth/SignedOutPanel";
-import { DashboardSidebar } from "@/components/organisms/DashboardSidebar";
-import { DashboardShell } from "@/components/templates/DashboardShell";
+import { DashboardPageLayout } from "@/components/templates/DashboardPageLayout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -293,37 +290,23 @@ export default function EditBoardPage() {
 
   return (
     <>
-      <DashboardShell>
-        <SignedOut>
-          <SignedOutPanel
-            message="Sign in to edit boards."
-            forceRedirectUrl={`/boards/${boardId}/edit`}
-            signUpForceRedirectUrl={`/boards/${boardId}/edit`}
-          />
-        </SignedOut>
-        <SignedIn>
-          <DashboardSidebar />
-          <main ref={mainRef} className="flex-1 overflow-y-auto bg-slate-50">
-            <div className="border-b border-slate-200 bg-white px-8 py-6">
-              <div>
-                <h1 className="font-heading text-2xl font-semibold text-slate-900 tracking-tight">
-                  Edit board
-                </h1>
-                <p className="mt-1 text-sm text-slate-500">
-                  Update board settings and gateway.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-8">
-              {!isAdmin ? (
-                <AdminOnlyNotice message="Only organization owners and admins can edit board settings." />
-              ) : (
-                <div className="space-y-6">
-                  <form
-                    onSubmit={handleSubmit}
-                    className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
-                  >
+      <DashboardPageLayout
+        signedOut={{
+          message: "Sign in to edit boards.",
+          forceRedirectUrl: `/boards/${boardId}/edit`,
+          signUpForceRedirectUrl: `/boards/${boardId}/edit`,
+        }}
+        title="Edit board"
+        description="Update board settings and gateway."
+        isAdmin={isAdmin}
+        adminOnlyMessage="Only organization owners and admins can edit board settings."
+        mainRef={mainRef}
+      >
+        <div className="space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+          >
                     {resolvedBoardType !== "general" &&
                     baseBoard &&
                     !(baseBoard.goal_confirmed ?? false) ? (
@@ -496,13 +479,9 @@ export default function EditBoardPage() {
                         {isLoading ? "Saving…" : "Save changes"}
                       </Button>
                     </div>
-                  </form>
-                </div>
-              )}
-            </div>
-          </main>
-        </SignedIn>
-      </DashboardShell>
+          </form>
+        </div>
+      </DashboardPageLayout>
       <Dialog open={isOnboardingOpen} onOpenChange={setIsOnboardingOpen}>
         <DialogContent
           aria-label="Board onboarding"

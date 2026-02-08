@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import { SignedIn, SignedOut, useAuth } from "@/auth/clerk";
+import { useAuth } from "@/auth/clerk";
 
 import { ApiError } from "@/api/mutator";
 import {
@@ -19,10 +19,7 @@ import {
   useListAgentsApiV1AgentsGet,
 } from "@/api/generated/agents/agents";
 import { useOrganizationMembership } from "@/lib/use-organization-membership";
-import { AdminOnlyNotice } from "@/components/auth/AdminOnlyNotice";
-import { SignedOutPanel } from "@/components/auth/SignedOutPanel";
-import { DashboardSidebar } from "@/components/organisms/DashboardSidebar";
-import { DashboardShell } from "@/components/templates/DashboardShell";
+import { DashboardPageLayout } from "@/components/templates/DashboardPageLayout";
 import { Button } from "@/components/ui/button";
 
 const formatTimestamp = (value?: string | null) => {
@@ -113,57 +110,38 @@ export default function GatewayDetailPage() {
   );
 
   return (
-    <DashboardShell>
-      <SignedOut>
-        <SignedOutPanel
-          message="Sign in to view a gateway."
-          forceRedirectUrl={`/gateways/${gatewayId}`}
-        />
-      </SignedOut>
-      <SignedIn>
-        <DashboardSidebar />
-        <main className="flex-1 overflow-y-auto bg-slate-50">
-          <div className="border-b border-slate-200 bg-white px-8 py-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h1 className="font-heading text-2xl font-semibold text-slate-900 tracking-tight">
-                  {title}
-                </h1>
-                <p className="mt-1 text-sm text-slate-500">
-                  Gateway configuration and connection details.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => router.push("/gateways")}
-                >
-                  Back to gateways
-                </Button>
-                {isAdmin && gatewayId ? (
-                  <Button
-                    onClick={() => router.push(`/gateways/${gatewayId}/edit`)}
-                  >
-                    Edit gateway
-                  </Button>
-                ) : null}
-              </div>
-            </div>
-          </div>
-
-          <div className="p-8">
-            {!isAdmin ? (
-              <AdminOnlyNotice message="Only organization owners and admins can access gateways." />
-            ) : gatewayQuery.isLoading ? (
-              <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
-                Loading gateway…
-              </div>
-            ) : gatewayQuery.error ? (
-              <div className="rounded-xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-700">
-                {gatewayQuery.error.message}
-              </div>
-            ) : gateway ? (
-              <div className="space-y-6">
+    <DashboardPageLayout
+      signedOut={{
+        message: "Sign in to view a gateway.",
+        forceRedirectUrl: `/gateways/${gatewayId}`,
+      }}
+      title={title}
+      description="Gateway configuration and connection details."
+      headerActions={
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => router.push("/gateways")}>
+            Back to gateways
+          </Button>
+          {isAdmin && gatewayId ? (
+            <Button onClick={() => router.push(`/gateways/${gatewayId}/edit`)}>
+              Edit gateway
+            </Button>
+          ) : null}
+        </div>
+      }
+      isAdmin={isAdmin}
+      adminOnlyMessage="Only organization owners and admins can access gateways."
+    >
+      {gatewayQuery.isLoading ? (
+        <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+          Loading gateway…
+        </div>
+      ) : gatewayQuery.error ? (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-700">
+          {gatewayQuery.error.message}
+        </div>
+      ) : gateway ? (
+        <div className="space-y-6">
                 <div className="grid gap-6 lg:grid-cols-2">
                   <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                     <div className="flex items-center justify-between">
@@ -312,11 +290,8 @@ export default function GatewayDetailPage() {
                     </table>
                   </div>
                 </div>
-              </div>
-            ) : null}
-          </div>
-        </main>
-      </SignedIn>
-    </DashboardShell>
+        </div>
+      ) : null}
+    </DashboardPageLayout>
   );
 }

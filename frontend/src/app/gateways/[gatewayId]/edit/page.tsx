@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import { SignedIn, SignedOut, useAuth } from "@/auth/clerk";
+import { useAuth } from "@/auth/clerk";
 
 import { ApiError } from "@/api/mutator";
 import {
@@ -15,11 +15,8 @@ import {
 } from "@/api/generated/gateways/gateways";
 import { useOrganizationMembership } from "@/lib/use-organization-membership";
 import type { GatewayUpdate } from "@/api/generated/model";
-import { AdminOnlyNotice } from "@/components/auth/AdminOnlyNotice";
-import { SignedOutPanel } from "@/components/auth/SignedOutPanel";
 import { GatewayForm } from "@/components/gateways/GatewayForm";
-import { DashboardSidebar } from "@/components/organisms/DashboardSidebar";
-import { DashboardShell } from "@/components/templates/DashboardShell";
+import { DashboardPageLayout } from "@/components/templates/DashboardPageLayout";
 import {
   DEFAULT_MAIN_SESSION_KEY,
   DEFAULT_WORKSPACE_ROOT,
@@ -164,76 +161,59 @@ export default function EditGatewayPage() {
   };
 
   return (
-    <DashboardShell>
-      <SignedOut>
-        <SignedOutPanel
-          message="Sign in to edit a gateway."
-          forceRedirectUrl={`/gateways/${gatewayId}/edit`}
-        />
-      </SignedOut>
-      <SignedIn>
-        <DashboardSidebar />
-        <main className="flex-1 overflow-y-auto bg-slate-50">
-          <div className="border-b border-slate-200 bg-white px-8 py-6">
-            <div>
-              <h1 className="font-heading text-2xl font-semibold text-slate-900 tracking-tight">
-                {resolvedName.trim()
-                  ? `Edit gateway — ${resolvedName.trim()}`
-                  : "Edit gateway"}
-              </h1>
-              <p className="mt-1 text-sm text-slate-500">
-                Update connection settings for this OpenClaw gateway.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-8">
-            {!isAdmin ? (
-              <AdminOnlyNotice message="Only organization owners and admins can edit gateways." />
-            ) : (
-              <GatewayForm
-                name={resolvedName}
-                gatewayUrl={resolvedGatewayUrl}
-                gatewayToken={resolvedGatewayToken}
-                mainSessionKey={resolvedMainSessionKey}
-                workspaceRoot={resolvedWorkspaceRoot}
-                gatewayUrlError={gatewayUrlError}
-                gatewayCheckStatus={gatewayCheckStatus}
-                gatewayCheckMessage={gatewayCheckMessage}
-                errorMessage={errorMessage}
-                isLoading={isLoading}
-                canSubmit={canSubmit}
-                mainSessionKeyPlaceholder={DEFAULT_MAIN_SESSION_KEY}
-                workspaceRootPlaceholder={DEFAULT_WORKSPACE_ROOT}
-                cancelLabel="Back"
-                submitLabel="Save changes"
-                submitBusyLabel="Saving…"
-                onSubmit={handleSubmit}
-                onCancel={() => router.push("/gateways")}
-                onRunGatewayCheck={runGatewayCheck}
-                onNameChange={setName}
-                onGatewayUrlChange={(next) => {
-                  setGatewayUrl(next);
-                  setGatewayUrlError(null);
-                  setGatewayCheckStatus("idle");
-                  setGatewayCheckMessage(null);
-                }}
-                onGatewayTokenChange={(next) => {
-                  setGatewayToken(next);
-                  setGatewayCheckStatus("idle");
-                  setGatewayCheckMessage(null);
-                }}
-                onMainSessionKeyChange={(next) => {
-                  setMainSessionKey(next);
-                  setGatewayCheckStatus("idle");
-                  setGatewayCheckMessage(null);
-                }}
-                onWorkspaceRootChange={setWorkspaceRoot}
-              />
-            )}
-          </div>
-        </main>
-      </SignedIn>
-    </DashboardShell>
+    <DashboardPageLayout
+      signedOut={{
+        message: "Sign in to edit a gateway.",
+        forceRedirectUrl: `/gateways/${gatewayId}/edit`,
+      }}
+      title={
+        resolvedName.trim()
+          ? `Edit gateway — ${resolvedName.trim()}`
+          : "Edit gateway"
+      }
+      description="Update connection settings for this OpenClaw gateway."
+      isAdmin={isAdmin}
+      adminOnlyMessage="Only organization owners and admins can edit gateways."
+    >
+      <GatewayForm
+        name={resolvedName}
+        gatewayUrl={resolvedGatewayUrl}
+        gatewayToken={resolvedGatewayToken}
+        mainSessionKey={resolvedMainSessionKey}
+        workspaceRoot={resolvedWorkspaceRoot}
+        gatewayUrlError={gatewayUrlError}
+        gatewayCheckStatus={gatewayCheckStatus}
+        gatewayCheckMessage={gatewayCheckMessage}
+        errorMessage={errorMessage}
+        isLoading={isLoading}
+        canSubmit={canSubmit}
+        mainSessionKeyPlaceholder={DEFAULT_MAIN_SESSION_KEY}
+        workspaceRootPlaceholder={DEFAULT_WORKSPACE_ROOT}
+        cancelLabel="Back"
+        submitLabel="Save changes"
+        submitBusyLabel="Saving…"
+        onSubmit={handleSubmit}
+        onCancel={() => router.push("/gateways")}
+        onRunGatewayCheck={runGatewayCheck}
+        onNameChange={setName}
+        onGatewayUrlChange={(next) => {
+          setGatewayUrl(next);
+          setGatewayUrlError(null);
+          setGatewayCheckStatus("idle");
+          setGatewayCheckMessage(null);
+        }}
+        onGatewayTokenChange={(next) => {
+          setGatewayToken(next);
+          setGatewayCheckStatus("idle");
+          setGatewayCheckMessage(null);
+        }}
+        onMainSessionKeyChange={(next) => {
+          setMainSessionKey(next);
+          setGatewayCheckStatus("idle");
+          setGatewayCheckMessage(null);
+        }}
+        onWorkspaceRootChange={setWorkspaceRoot}
+      />
+    </DashboardPageLayout>
   );
 }

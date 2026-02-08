@@ -5,16 +5,13 @@ export const dynamic = "force-dynamic";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { SignedIn, SignedOut, useAuth } from "@/auth/clerk";
+import { useAuth } from "@/auth/clerk";
 
 import { ApiError } from "@/api/mutator";
 import { useCreateGatewayApiV1GatewaysPost } from "@/api/generated/gateways/gateways";
 import { useOrganizationMembership } from "@/lib/use-organization-membership";
-import { AdminOnlyNotice } from "@/components/auth/AdminOnlyNotice";
-import { SignedOutPanel } from "@/components/auth/SignedOutPanel";
 import { GatewayForm } from "@/components/gateways/GatewayForm";
-import { DashboardSidebar } from "@/components/organisms/DashboardSidebar";
-import { DashboardShell } from "@/components/templates/DashboardShell";
+import { DashboardPageLayout } from "@/components/templates/DashboardPageLayout";
 import {
   DEFAULT_MAIN_SESSION_KEY,
   DEFAULT_WORKSPACE_ROOT,
@@ -125,74 +122,55 @@ export default function NewGatewayPage() {
   };
 
   return (
-    <DashboardShell>
-      <SignedOut>
-        <SignedOutPanel
-          message="Sign in to create a gateway."
-          forceRedirectUrl="/gateways/new"
-        />
-      </SignedOut>
-      <SignedIn>
-        <DashboardSidebar />
-        <main className="flex-1 overflow-y-auto bg-slate-50">
-          <div className="border-b border-slate-200 bg-white px-8 py-6">
-            <div>
-              <h1 className="font-heading text-2xl font-semibold text-slate-900 tracking-tight">
-                Create gateway
-              </h1>
-              <p className="mt-1 text-sm text-slate-500">
-                Configure an OpenClaw gateway for mission control.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-8">
-            {!isAdmin ? (
-              <AdminOnlyNotice message="Only organization owners and admins can create gateways." />
-            ) : (
-              <GatewayForm
-                name={name}
-                gatewayUrl={gatewayUrl}
-                gatewayToken={gatewayToken}
-                mainSessionKey={mainSessionKey}
-                workspaceRoot={workspaceRoot}
-                gatewayUrlError={gatewayUrlError}
-                gatewayCheckStatus={gatewayCheckStatus}
-                gatewayCheckMessage={gatewayCheckMessage}
-                errorMessage={error}
-                isLoading={isLoading}
-                canSubmit={canSubmit}
-                mainSessionKeyPlaceholder={DEFAULT_MAIN_SESSION_KEY}
-                workspaceRootPlaceholder={DEFAULT_WORKSPACE_ROOT}
-                cancelLabel="Cancel"
-                submitLabel="Create gateway"
-                submitBusyLabel="Creating…"
-                onSubmit={handleSubmit}
-                onCancel={() => router.push("/gateways")}
-                onRunGatewayCheck={runGatewayCheck}
-                onNameChange={setName}
-                onGatewayUrlChange={(next) => {
-                  setGatewayUrl(next);
-                  setGatewayUrlError(null);
-                  setGatewayCheckStatus("idle");
-                  setGatewayCheckMessage(null);
-                }}
-                onGatewayTokenChange={(next) => {
-                  setGatewayToken(next);
-                  setGatewayCheckStatus("idle");
-                  setGatewayCheckMessage(null);
-                }}
-                onMainSessionKeyChange={(next) => {
-                  setMainSessionKey(next);
-                  setGatewayCheckStatus("idle");
-                  setGatewayCheckMessage(null);
-                }}
-                onWorkspaceRootChange={setWorkspaceRoot}
-              />
-            )}
-          </div>
-        </main>
-      </SignedIn>
-    </DashboardShell>
+    <DashboardPageLayout
+      signedOut={{
+        message: "Sign in to create a gateway.",
+        forceRedirectUrl: "/gateways/new",
+      }}
+      title="Create gateway"
+      description="Configure an OpenClaw gateway for mission control."
+      isAdmin={isAdmin}
+      adminOnlyMessage="Only organization owners and admins can create gateways."
+    >
+      <GatewayForm
+        name={name}
+        gatewayUrl={gatewayUrl}
+        gatewayToken={gatewayToken}
+        mainSessionKey={mainSessionKey}
+        workspaceRoot={workspaceRoot}
+        gatewayUrlError={gatewayUrlError}
+        gatewayCheckStatus={gatewayCheckStatus}
+        gatewayCheckMessage={gatewayCheckMessage}
+        errorMessage={error}
+        isLoading={isLoading}
+        canSubmit={canSubmit}
+        mainSessionKeyPlaceholder={DEFAULT_MAIN_SESSION_KEY}
+        workspaceRootPlaceholder={DEFAULT_WORKSPACE_ROOT}
+        cancelLabel="Cancel"
+        submitLabel="Create gateway"
+        submitBusyLabel="Creating…"
+        onSubmit={handleSubmit}
+        onCancel={() => router.push("/gateways")}
+        onRunGatewayCheck={runGatewayCheck}
+        onNameChange={setName}
+        onGatewayUrlChange={(next) => {
+          setGatewayUrl(next);
+          setGatewayUrlError(null);
+          setGatewayCheckStatus("idle");
+          setGatewayCheckMessage(null);
+        }}
+        onGatewayTokenChange={(next) => {
+          setGatewayToken(next);
+          setGatewayCheckStatus("idle");
+          setGatewayCheckMessage(null);
+        }}
+        onMainSessionKeyChange={(next) => {
+          setMainSessionKey(next);
+          setGatewayCheckStatus("idle");
+          setGatewayCheckMessage(null);
+        }}
+        onWorkspaceRootChange={setWorkspaceRoot}
+      />
+    </DashboardPageLayout>
   );
 }

@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 
-import { SignedIn, SignedOut, useAuth } from "@/auth/clerk";
+import { useAuth } from "@/auth/clerk";
 import {
   type ColumnDef,
   type SortingState,
@@ -16,8 +16,7 @@ import {
 } from "@tanstack/react-table";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { DashboardSidebar } from "@/components/organisms/DashboardSidebar";
-import { DashboardShell } from "@/components/templates/DashboardShell";
+import { DashboardPageLayout } from "@/components/templates/DashboardPageLayout";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,8 +36,6 @@ import {
 } from "@/api/generated/gateways/gateways";
 import { useOrganizationMembership } from "@/lib/use-organization-membership";
 import type { GatewayRead } from "@/api/generated/model";
-import { AdminOnlyNotice } from "@/components/auth/AdminOnlyNotice";
-import { SignedOutPanel } from "@/components/auth/SignedOutPanel";
 
 const truncate = (value?: string | null, max = 24) => {
   if (!value) return "—";
@@ -220,148 +217,124 @@ export default function GatewaysPage() {
   });
 
   return (
-    <DashboardShell>
-      <SignedOut>
-        <SignedOutPanel
-          message="Sign in to view gateways."
-          forceRedirectUrl="/gateways"
-        />
-      </SignedOut>
-      <SignedIn>
-        <DashboardSidebar />
-        <main className="flex-1 overflow-y-auto bg-slate-50">
-          <div className="sticky top-0 z-30 border-b border-slate-200 bg-white">
-            <div className="px-8 py-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-                    Gateways
-                  </h1>
-                  <p className="mt-1 text-sm text-slate-500">
-                    Manage OpenClaw gateway connections used by boards
-                  </p>
-                </div>
-                {isAdmin && gateways.length > 0 ? (
-                  <Link
-                    href="/gateways/new"
-                    className={buttonVariants({
-                      size: "md",
-                      variant: "primary",
-                    })}
-                  >
-                    Create gateway
-                  </Link>
-                ) : null}
-              </div>
-            </div>
-          </div>
-
-          <div className="p-8">
-            {!isAdmin ? (
-              <AdminOnlyNotice message="Only organization owners and admins can access gateways." />
-            ) : (
-              <>
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                      <thead className="sticky top-0 z-10 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                        {table.getHeaderGroups().map((headerGroup) => (
-                          <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                              <th key={header.id} className="px-6 py-3">
-                                {header.isPlaceholder
-                                  ? null
-                                  : flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext(),
-                                    )}
-                              </th>
-                            ))}
-                          </tr>
-                        ))}
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {gatewaysQuery.isLoading ? (
-                          <tr>
-                            <td colSpan={columns.length} className="px-6 py-8">
-                              <span className="text-sm text-slate-500">
-                                Loading…
-                              </span>
-                            </td>
-                          </tr>
-                        ) : table.getRowModel().rows.length ? (
-                          table.getRowModel().rows.map((row) => (
-                            <tr key={row.id} className="hover:bg-slate-50">
-                              {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className="px-6 py-4">
-                                  {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext(),
-                                  )}
-                                </td>
-                              ))}
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={columns.length} className="px-6 py-16">
-                              <div className="flex flex-col items-center justify-center text-center">
-                                <div className="mb-4 rounded-full bg-slate-50 p-4">
-                                  <svg
-                                    className="h-16 w-16 text-slate-300"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <rect
-                                      x="2"
-                                      y="7"
-                                      width="20"
-                                      height="14"
-                                      rx="2"
-                                      ry="2"
-                                    />
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                                  </svg>
-                                </div>
-                                <h3 className="mb-2 text-lg font-semibold text-slate-900">
-                                  No gateways yet
-                                </h3>
-                                <p className="mb-6 max-w-md text-sm text-slate-500">
-                                  Create your first gateway to connect boards
-                                  and start managing your OpenClaw connections.
-                                </p>
-                                <Link
-                                  href="/gateways/new"
-                                  className={buttonVariants({
-                                    size: "md",
-                                    variant: "primary",
-                                  })}
-                                >
-                                  Create your first gateway
-                                </Link>
-                              </div>
-                            </td>
-                          </tr>
+    <>
+      <DashboardPageLayout
+      signedOut={{
+        message: "Sign in to view gateways.",
+        forceRedirectUrl: "/gateways",
+      }}
+      title="Gateways"
+      description="Manage OpenClaw gateway connections used by boards"
+      headerActions={
+        isAdmin && gateways.length > 0 ? (
+          <Link
+            href="/gateways/new"
+            className={buttonVariants({
+              size: "md",
+              variant: "primary",
+            })}
+          >
+            Create gateway
+          </Link>
+        ) : null
+      }
+      isAdmin={isAdmin}
+      adminOnlyMessage="Only organization owners and admins can access gateways."
+      stickyHeader
+    >
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="sticky top-0 z-10 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id} className="px-6 py-3">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {gatewaysQuery.isLoading ? (
+                <tr>
+                  <td colSpan={columns.length} className="px-6 py-8">
+                    <span className="text-sm text-slate-500">Loading…</span>
+                  </td>
+                </tr>
+              ) : table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr key={row.id} className="hover:bg-slate-50">
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-6 py-4">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
                         )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={columns.length} className="px-6 py-16">
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <div className="mb-4 rounded-full bg-slate-50 p-4">
+                        <svg
+                          className="h-16 w-16 text-slate-300"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect
+                            x="2"
+                            y="7"
+                            width="20"
+                            height="14"
+                            rx="2"
+                            ry="2"
+                          />
+                          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                        </svg>
+                      </div>
+                      <h3 className="mb-2 text-lg font-semibold text-slate-900">
+                        No gateways yet
+                      </h3>
+                      <p className="mb-6 max-w-md text-sm text-slate-500">
+                        Create your first gateway to connect boards and start
+                        managing your OpenClaw connections.
+                      </p>
+                      <Link
+                        href="/gateways/new"
+                        className={buttonVariants({
+                          size: "md",
+                          variant: "primary",
+                        })}
+                      >
+                        Create your first gateway
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-                {gatewaysQuery.error ? (
-                  <p className="mt-4 text-sm text-red-500">
-                    {gatewaysQuery.error.message}
-                  </p>
-                ) : null}
-              </>
-            )}
-          </div>
-        </main>
-      </SignedIn>
+      {gatewaysQuery.error ? (
+        <p className="mt-4 text-sm text-red-500">{gatewaysQuery.error.message}</p>
+      ) : null}
+      </DashboardPageLayout>
 
       <Dialog
         open={Boolean(deleteTarget)}
@@ -390,6 +363,6 @@ export default function GatewaysPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </DashboardShell>
+    </>
   );
 }

@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { SignedIn, SignedOut, useAuth } from "@/auth/clerk";
+import { useAuth } from "@/auth/clerk";
 
 import { ApiError } from "@/api/mutator";
 import {
@@ -15,10 +15,7 @@ import {
 import { useCreateAgentApiV1AgentsPost } from "@/api/generated/agents/agents";
 import { useOrganizationMembership } from "@/lib/use-organization-membership";
 import type { BoardRead } from "@/api/generated/model";
-import { AdminOnlyNotice } from "@/components/auth/AdminOnlyNotice";
-import { SignedOutPanel } from "@/components/auth/SignedOutPanel";
-import { DashboardSidebar } from "@/components/organisms/DashboardSidebar";
-import { DashboardShell } from "@/components/templates/DashboardShell";
+import { DashboardPageLayout } from "@/components/templates/DashboardPageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SearchableSelect, {
@@ -155,36 +152,21 @@ export default function NewAgentPage() {
   };
 
   return (
-    <DashboardShell>
-      <SignedOut>
-        <SignedOutPanel
-          message="Sign in to create an agent."
-          forceRedirectUrl="/agents/new"
-          signUpForceRedirectUrl="/agents/new"
-        />
-      </SignedOut>
-      <SignedIn>
-        <DashboardSidebar />
-        <main className="flex-1 overflow-y-auto bg-slate-50">
-          <div className="border-b border-slate-200 bg-white px-8 py-6">
-            <div>
-              <h1 className="font-heading text-2xl font-semibold text-slate-900 tracking-tight">
-                Create agent
-              </h1>
-              <p className="mt-1 text-sm text-slate-500">
-                Agents start in provisioning until they check in.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-8">
-            {!isAdmin ? (
-              <AdminOnlyNotice message="Only organization owners and admins can create agents." />
-            ) : (
-              <form
-                onSubmit={handleSubmit}
-                className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-6"
-              >
+    <DashboardPageLayout
+      signedOut={{
+        message: "Sign in to create an agent.",
+        forceRedirectUrl: "/agents/new",
+        signUpForceRedirectUrl: "/agents/new",
+      }}
+      title="Create agent"
+      description="Agents start in provisioning until they check in."
+      isAdmin={isAdmin}
+      adminOnlyMessage="Only organization owners and admins can create agents."
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-6"
+      >
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Basic configuration
@@ -372,11 +354,7 @@ export default function NewAgentPage() {
                     Back to agents
                   </Button>
                 </div>
-              </form>
-            )}
-          </div>
-        </main>
-      </SignedIn>
-    </DashboardShell>
+      </form>
+    </DashboardPageLayout>
   );
 }
