@@ -15,6 +15,7 @@ from app.db import crud
 from app.db.pagination import paginate
 from app.db.session import get_session
 from app.models.agents import Agent
+from app.models.board_group_memory import BoardGroupMemory
 from app.models.board_groups import BoardGroup
 from app.models.boards import Board
 from app.models.gateways import Gateway
@@ -278,6 +279,9 @@ async def delete_board_group(
     # Boards reference groups, so clear the FK first to keep deletes simple.
     await session.execute(
         update(Board).where(col(Board.board_group_id) == group_id).values(board_group_id=None)
+    )
+    await session.execute(
+        delete(BoardGroupMemory).where(col(BoardGroupMemory.board_group_id) == group_id)
     )
     await session.execute(delete(BoardGroup).where(col(BoardGroup.id) == group_id))
     await session.commit()
