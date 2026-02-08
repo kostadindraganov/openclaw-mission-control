@@ -21,21 +21,20 @@ describe("/activity feed", () => {
     cy.contains(/live feed/i, { timeout: 30_000 }).should("be.visible");
   }
 
-  it("auth negative: wrong OTP shows an error", () => {
+  it("auth negative: wrong OTP keeps us on sign-in", () => {
     cy.visit("/activity");
-    cy.contains(/sign in to view the feed/i).should("be.visible");
+
+    // Protected route should redirect to Clerk sign-in.
+    cy.location("pathname", { timeout: 20_000 }).should("match", /\/sign-in/);
 
     // Override OTP just for this test.
     Cypress.env("CLERK_TEST_OTP", "000000");
 
-    cy.get('[data-testid="activity-signin"]').should("be.visible");
-
-    // Expect login flow to throw within cy.origin; easiest assertion is that we stay signed out.
+    // Expect login flow to fail; easiest assertion is that we remain on sign-in.
     // (The shared helper does not currently expose a typed hook to assert the error text.)
     cy.loginWithClerkOtp();
 
-    // If OTP was invalid, we should still be signed out on app.
-    cy.contains(/sign in to view the feed/i, { timeout: 30_000 }).should("be.visible");
+    cy.location("pathname", { timeout: 30_000 }).should("match", /\/sign-in/);
   });
 
   it("happy path: renders task comment cards", () => {
@@ -61,7 +60,7 @@ describe("/activity feed", () => {
     stubStreamEmpty();
 
     cy.visit("/activity");
-    cy.contains(/sign in to view the feed/i).should("be.visible");
+    cy.location("pathname", { timeout: 20_000 }).should("match", /\/sign-in/);
 
     cy.loginWithClerkOtp();
     assertSignedInAndLanded();
@@ -80,7 +79,7 @@ describe("/activity feed", () => {
     stubStreamEmpty();
 
     cy.visit("/activity");
-    cy.contains(/sign in to view the feed/i).should("be.visible");
+    cy.location("pathname", { timeout: 20_000 }).should("match", /\/sign-in/);
 
     cy.loginWithClerkOtp();
     assertSignedInAndLanded();
@@ -98,7 +97,7 @@ describe("/activity feed", () => {
     stubStreamEmpty();
 
     cy.visit("/activity");
-    cy.contains(/sign in to view the feed/i).should("be.visible");
+    cy.location("pathname", { timeout: 20_000 }).should("match", /\/sign-in/);
 
     cy.loginWithClerkOtp();
     assertSignedInAndLanded();
