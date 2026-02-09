@@ -52,6 +52,13 @@ files = ["app", "scripts"]
 mypy_path = ["typings"]
 show_error_codes = true
 
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+ignore_errors = true
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["ALL"]
+
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
 
