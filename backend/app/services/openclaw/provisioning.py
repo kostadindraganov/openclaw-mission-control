@@ -132,6 +132,11 @@ def _workspace_path(agent: Agent, workspace_root: str) -> str:
     # lead agents (session key includes board id) even if multiple boards share the same
     # display name (e.g. "Lead Agent").
     key = _agent_key(agent)
+    # Backwards-compat: gateway-main agents historically used session keys that encoded
+    # "gateway-<id>" while the gateway agent id is "mc-gateway-<id>".
+    # Keep the on-disk workspace path stable so existing provisioned files aren't moved.
+    if key.startswith("mc-gateway-"):
+        key = key.removeprefix("mc-")
     return f"{root}/workspace-{slugify(key)}"
 
 

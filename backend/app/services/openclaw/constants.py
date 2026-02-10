@@ -7,9 +7,9 @@ import re
 from datetime import timedelta
 from typing import Any
 
-_GATEWAY_AGENT_PREFIX = "agent:gateway-"
-_GATEWAY_AGENT_SUFFIX = ":main"
 _GATEWAY_OPENCLAW_AGENT_PREFIX = "mc-gateway-"
+_GATEWAY_AGENT_PREFIX = f"agent:{_GATEWAY_OPENCLAW_AGENT_PREFIX}"
+_GATEWAY_AGENT_SUFFIX = ":main"
 
 DEFAULT_HEARTBEAT_CONFIG: dict[str, Any] = {
     "every": "10m",
