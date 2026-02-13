@@ -396,6 +396,8 @@ def _collect_pack_skills(source_url: str) -> list[PackSkillCandidate]:
         except (FileNotFoundError, subprocess.TimeoutExpired, subprocess.CalledProcessError):
             branch = "main"
 
+        branch = branch or "main"
+
         return _collect_pack_skills_from_repo(
             repo_dir=repo_dir,
             source_url=source_url,
