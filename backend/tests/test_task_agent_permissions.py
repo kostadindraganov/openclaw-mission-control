@@ -480,7 +480,7 @@ async def test_non_lead_agent_comment_in_review_without_status_does_not_reassign
                 payload=TaskUpdate(comment="I can help with this."),
                 task=task,
                 session=session,
-                actor=ActorContext(actor_type="agent", actor=commentator),
+                actor=ActorContext(actor_type="agent", agent=commentator),
             )
 
             assert updated.status == "review"
