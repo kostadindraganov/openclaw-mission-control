@@ -262,7 +262,7 @@ async def _validate_agent_id(
     agent = await Agent.objects.filter_by(id=agent_id, board_id=board.id).first(session)
     if agent is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="agent_id must reference an agent on this board.",
         )
 

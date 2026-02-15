@@ -160,7 +160,7 @@ async def get_board_group_snapshot(
         write=False,
     )
     if per_board_task_limit < 0:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
     snapshot = await build_group_snapshot(
         session,
         group=group,

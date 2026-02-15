@@ -755,7 +755,7 @@ class AgentLifecycleService(OpenClawDBService):
             if existing:
                 return existing
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="Gateway main agent session key is required",
             )
         if agent.is_board_lead:
@@ -766,7 +766,7 @@ class AgentLifecycleService(OpenClawDBService):
     def workspace_path(cls, agent_name: str, workspace_root: str | None) -> str:
         if not workspace_root:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="Gateway workspace_root is required",
             )
         root = workspace_root.rstrip("/")
@@ -781,7 +781,7 @@ class AgentLifecycleService(OpenClawDBService):
     ) -> Board:
         if not board_id:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="board_id is required",
             )
         board = await Board.objects.by_id(board_id).first(self.session)
@@ -1070,7 +1070,7 @@ class AgentLifecycleService(OpenClawDBService):
                 )
                 if template_user is None:
                     raise HTTPException(
-                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                         detail=(
                             "User context is required to provision the gateway main agent "
                             "(org owner not found)."
@@ -1220,7 +1220,7 @@ class AgentLifecycleService(OpenClawDBService):
         elif make_main is not None:
             if "board_id" not in updates or updates["board_id"] is None:
                 raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                     detail=(
                         "board_id is required when converting a gateway-main agent "
                         "to board scope"
@@ -1229,7 +1229,7 @@ class AgentLifecycleService(OpenClawDBService):
             board = await self.require_board(updates["board_id"])
             if board.gateway_id is None:
                 raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                     detail="Board gateway_id is required",
                 )
             updates["gateway_id"] = board.gateway_id
@@ -1239,7 +1239,7 @@ class AgentLifecycleService(OpenClawDBService):
             board = await self.require_board(updates["board_id"])
             if board.gateway_id is None:
                 raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                     detail="Board gateway_id is required",
                 )
             updates["gateway_id"] = board.gateway_id
@@ -1254,7 +1254,7 @@ class AgentLifecycleService(OpenClawDBService):
             board = await self.require_board(agent.board_id)
             if board.gateway_id is None:
                 raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                     detail="Board gateway_id is required",
                 )
             agent.gateway_id = board.gateway_id
@@ -1277,7 +1277,7 @@ class AgentLifecycleService(OpenClawDBService):
         if make_main:
             if gateway_for_main is None:
                 raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                     detail="Gateway agent requires a gateway configuration",
                 )
             return AgentUpdateProvisionTarget(
@@ -1295,7 +1295,7 @@ class AgentLifecycleService(OpenClawDBService):
 
         if agent.board_id is None:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="board_id is required for non-main agents",
             )
         board = await self.require_board(agent.board_id)

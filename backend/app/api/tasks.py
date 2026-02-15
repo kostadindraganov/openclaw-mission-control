@@ -121,7 +121,7 @@ class _BoardCustomFieldDefinition:
 
 def _comment_validation_error() -> HTTPException:
     return HTTPException(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         detail="Comment is required.",
     )
 
@@ -723,7 +723,7 @@ def _status_values(status_filter: str | None) -> list[str]:
     values = [s.strip() for s in status_filter.split(",") if s.strip()]
     if any(value not in ALLOWED_STATUSES for value in values):
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Unsupported task status filter.",
         )
     return values
@@ -777,7 +777,7 @@ def _reject_unknown_custom_field_keys(
     if not unknown_field_keys:
         return
     raise HTTPException(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         detail={
             "message": "Unknown custom field keys for this board.",
             "unknown_field_keys": unknown_field_keys,
@@ -798,7 +798,7 @@ def _reject_missing_required_custom_field_keys(
     if not missing_field_keys:
         return
     raise HTTPException(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         detail={
             "message": "Required custom fields must have values.",
             "missing_field_keys": sorted(missing_field_keys),
@@ -821,7 +821,7 @@ def _reject_invalid_custom_field_values(
             )
         except ValueError as err:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail={
                     "message": "Invalid custom field value.",
                     "field_key": field_key,
@@ -1372,7 +1372,7 @@ async def update_task(
     """Update task status, assignment, comment, and dependency state."""
     if task.board_id is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Task board_id is required.",
         )
     board_id = task.board_id
@@ -1498,7 +1498,7 @@ async def delete_task(
 ) -> OkResponse:
     """Delete a task and related records."""
     if task.board_id is None:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
     board = await Board.objects.by_id(task.board_id).first(session)
     if board is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -1534,7 +1534,7 @@ async def _validate_task_comment_access(
     actor: ActorContext,
 ) -> None:
     if task.board_id is None:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
 
     if actor.actor_type == "user" and actor.user is not None:
         board = await Board.objects.by_id(task.board_id).first(session)
@@ -1677,13 +1677,13 @@ class _TaskUpdateInput:
 def _required_status_value(value: object) -> str:
     if isinstance(value, str):
         return value
-    raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
 
 
 def _optional_assigned_agent_id(value: object) -> UUID | None:
     if value is None or isinstance(value, UUID):
         return value
-    raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
 
 
 async def _board_organization_id(

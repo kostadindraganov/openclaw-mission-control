@@ -69,12 +69,12 @@ async def _require_gateway(
     gateway = await crud.get_by_id(session, Gateway, gateway_id)
     if gateway is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="gateway_id is invalid",
         )
     if organization_id is not None and gateway.organization_id != organization_id:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="gateway_id is invalid",
         )
     return gateway
@@ -101,12 +101,12 @@ async def _require_board_group(
     group = await crud.get_by_id(session, BoardGroup, board_group_id)
     if group is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="board_group_id is invalid",
         )
     if organization_id is not None and group.organization_id != organization_id:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="board_group_id is invalid",
         )
     return group
@@ -153,12 +153,12 @@ async def _apply_board_update(
     if updates.get("board_type") == "goal" and (not board.objective or not board.success_metrics):
         # Validate only when explicitly switching to goal boards.
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Goal boards require objective and success_metrics",
         )
     if not board.gateway_id:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="gateway_id is required",
         )
     board.updated_at = utcnow()

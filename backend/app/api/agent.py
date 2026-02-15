@@ -783,7 +783,7 @@ async def delete_task(
     _guard_task_access(agent_ctx, task)
     _require_board_lead(agent_ctx)
     if task.board_id is None:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
     await tasks_api.delete_task_and_related_records(session, task=task)
     return OkResponse()
 

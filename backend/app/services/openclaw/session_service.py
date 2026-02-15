@@ -101,7 +101,7 @@ class GatewaySessionService(OpenClawDBService):
             raw_url = params.gateway_url.strip()
             if not raw_url:
                 raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                     detail="board_id or gateway_url is required",
                 )
             return (
@@ -114,7 +114,7 @@ class GatewaySessionService(OpenClawDBService):
             )
         if not params.board_id:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="board_id or gateway_url is required",
             )
         board = await Board.objects.by_id(params.board_id).first(self.session)
@@ -144,7 +144,7 @@ class GatewaySessionService(OpenClawDBService):
         board, config, main_session = await self.resolve_gateway(params, user=user)
         if board is None:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="board_id is required",
             )
         return board, config, main_session

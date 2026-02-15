@@ -600,7 +600,7 @@ async def create_board_group_memory_for_board(
     group_id = board.board_group_id
     if group_id is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Board is not in a board group",
         )
     group = await BoardGroup.objects.by_id(group_id).first(session)
