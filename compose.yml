@@ -44,7 +44,7 @@ services:
       redis:
         condition: service_started
     ports:
-      - "${BACKEND_PORT:-8000}:8008"
+      - "${BACKEND_PORT:-8008}:8008"
 
   frontend:
     build:
